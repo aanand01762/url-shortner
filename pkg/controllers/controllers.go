@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
@@ -45,45 +46,56 @@ func readfromFile() []URLRecord {
 
 func CreateRecord(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	//Parse the url from request body
 	urlname := &uri{}
 	utils.ParseBody(r, urlname)
 	inputurl := (*urlname).Url
+
+	//convert url to short url via LongToShort method
 	short, id, existing := s.LongToShort(inputurl)
 	recordEntry := URLRecord{id, inputurl, short}
-	fmt.Println(recordEntry)
 	json.NewDecoder(r.Body).Decode(&recordEntry)
+
+	//check if url does not exist in the file then
+	//only append to records and return response
 	if !existing {
 		URLRecords = append(URLRecords, recordEntry)
+		file, _ := json.MarshalIndent(URLRecords, "", " ")
+		_ = ioutil.WriteFile(OutputFile, file, 0644)
 	}
 	json.NewEncoder(w).Encode(recordEntry)
-	file, _ := json.MarshalIndent(URLRecords, "", " ")
 
-	_ = ioutil.WriteFile(OutputFile, file, 0644)
 }
 
 func DeleteRecord(w http.ResponseWriter, r *http.Request) {
-
 	w.Header().Set("Content-Type", "application/json")
+
+	//Fetch the delete id from path parameter
 	vars := mux.Vars(r)
 	id := vars["id"]
-
 	readRecords := readfromFile()
 
-	fmt.Println(id)
+	//Search the id and delete it
 	for index, record := range readRecords {
 		if fmt.Sprint(record.ID) == id {
 			nweRecords := append(readRecords[:index], readRecords[index+1:]...)
-			fmt.Println(nweRecords)
+
+			//return full list of records with deleted id
 			json.NewEncoder(w).Encode(nweRecords)
 			file, _ := json.MarshalIndent(nweRecords, "", " ")
 			_ = ioutil.WriteFile(OutputFile, file, 0644)
 			break
+		} else {
+			log.Fatal(fmt.Printf("Id %v not found", id))
 		}
 	}
 }
 
 func GetURLs(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	//Read records from file and return the response
 	getRecords := readfromFile()
 	fmt.Println(getRecords)
 	json.NewEncoder(w).Encode(getRecords)
