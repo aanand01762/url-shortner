@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 
@@ -85,10 +84,11 @@ func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(nweRecords)
 			file, _ := json.MarshalIndent(nweRecords, "", " ")
 			_ = ioutil.WriteFile(OutputFile, file, 0644)
-			break
-		} else {
-			log.Fatal(fmt.Printf("Id %v not found", id))
+			return
 		}
+		w.WriteHeader(404)
+		fmt.Fprintf(w, "ERROR: id: %v not found", id)
+
 	}
 }
 
