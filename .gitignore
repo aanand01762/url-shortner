@@ -1,1 +1,4 @@
 go.mod
+go.sum
+url-shortner
+outputs/test.json

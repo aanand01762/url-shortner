@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+
+	//Create a router and start the server at port 8080
 	r := mux.NewRouter()
 	routes.RegisterBookStoreRoutes(r)
 	http.Handle("/", r)
