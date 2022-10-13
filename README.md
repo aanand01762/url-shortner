@@ -1,4 +1,4 @@
-# Small application to create short url
+#  Application to create short url
 
 #### How to run the application
 ```
@@ -27,11 +27,11 @@ url-shortner   v1        0e67cb6971c4   16 hours ago   310MB
 ```
 * Run the container using bind mount, below command will mount the outputs directory inside the container to the current working directory. Thus user can access the test.json (output file) where records are stored. 
 ```
-docker run -d -it --name <conatiner_name> --mount type=bind,source="$(pwd)",target=/app/outputs  url-shortner:v1
+docker run -d -it --name <conatiner_name> -p <localhost port>:8080 --mount type=bind,source="$(pwd)",target=/app/outputs  url-shortner:v1
 ```
 
 
-## API contracts
+## API Contracts
 
 #### Create Record
 ---
