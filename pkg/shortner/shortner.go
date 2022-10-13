@@ -1,7 +1,7 @@
 package shortner
 
 type URLService struct {
-	elements  string
+	Elements  string
 	COUNTER   int
 	LONGTOID  map[string]int
 	IDTOSMALL map[int]string
@@ -10,15 +10,6 @@ type URLService struct {
 func (s *URLService) LongToShort(url string) (string, int, bool) {
 	var shorturl string
 	var existing bool
-
-	//Check if instance struct type does not exits,
-	//then only initialise an instance which means its first entry
-	if s.LONGTOID == nil {
-		s.LONGTOID = map[string]int{}
-		s.IDTOSMALL = map[int]string{}
-		s.elements = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		s.COUNTER = 1000000000
-	}
 
 	//Check if url already exists, update existing flag
 	if id, ok := s.LONGTOID[url]; ok {
@@ -77,7 +68,7 @@ func (s *URLService) base10ToBase62(n int) string {
 	//Convert base62 format to interger value in base10 format
 	var sb string
 	for n != 0 {
-		sb = string(s.elements[n%62]) + sb
+		sb = string(s.Elements[n%62]) + sb
 		n /= 62
 	}
 	for len(sb) != 7 {

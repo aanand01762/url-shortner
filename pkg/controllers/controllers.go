@@ -12,8 +12,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var s shortner.URLService
+var s = shortner.URLService{
+	Elements:  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	COUNTER:   1000000000,
+	LONGTOID:  map[string]int{},
+	IDTOSMALL: map[int]string{}}
+
 var URLRecords []URLRecord
+
 var OutputFile string = "outputs/test.json"
 
 type URLRecord struct {
@@ -75,7 +81,16 @@ func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	readRecords := readfromFile()
 
-	//Search the id and delete it
+	//Search the id and delete it from in memory records
+	for i, rec := range URLRecords {
+		if fmt.Sprint(rec.ID) == id {
+			delete(s.IDTOSMALL, rec.ID)
+			delete(s.LONGTOID, rec.LongURL)
+			URLRecords = append(URLRecords[:i], URLRecords[i+1:]...)
+		}
+	}
+
+	//Search the id and delete it from in file/DB records
 	for index, record := range readRecords {
 		if fmt.Sprint(record.ID) == id {
 			nweRecords := append(readRecords[:index], readRecords[index+1:]...)
@@ -86,10 +101,10 @@ func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 			_ = ioutil.WriteFile(OutputFile, file, 0644)
 			return
 		}
-		w.WriteHeader(404)
-		fmt.Fprintf(w, "ERROR: id: %v not found", id)
-
 	}
+	w.WriteHeader(404)
+	fmt.Fprintf(w, "ERROR: id: %v not found", id)
+
 }
 
 func GetURLs(w http.ResponseWriter, r *http.Request) {
@@ -97,6 +112,6 @@ func GetURLs(w http.ResponseWriter, r *http.Request) {
 
 	//Read records from file and return the response
 	getRecords := readfromFile()
-	fmt.Println(getRecords)
+	fmt.Print(s, "\n\n")
 	json.NewEncoder(w).Encode(getRecords)
 }
