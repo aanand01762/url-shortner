@@ -9,7 +9,7 @@ go build
 ```
 
 #### How to run the application inside container
-* Build conatiner image using Dockerfile
+* Build container image using Dockerfile
 ```
 git clone https://github.com/aanand01762/url-shortner.git
 cd url-shortner
@@ -27,7 +27,7 @@ url-shortner   v1        0e67cb6971c4   16 hours ago   310MB
 ```
 * Run the container using bind mount, below command will mount the outputs directory inside the container to the current working directory. Thus user can access the test.json (output file) where records are stored. 
 ```
-docker run -d -it --name <conatiner_name> -p <localhost port>:8080 --mount type=bind,source="$(pwd)",target=/app/outputs  url-shortner:v1
+docker run -d -it --name <container_name> -p <localhost port>:8080 --mount type=bind,source="$(pwd)",target=/app/outputs  url-shortner:v1
 ```
 
 
@@ -71,4 +71,16 @@ docker run -d -it --name <conatiner_name> -p <localhost port>:8080 --mount type=
   `GET`
 * **Data Params**
   None
+  
+#### Get Long URL
+---
+  Returns long URL or actual URL corresponding to short URL.
+* **URL**
+  /records/short-to-long
+* **Method:**
+  `GET`
+* **Data Params**
+  `{
+        url: string
+     }`
 
