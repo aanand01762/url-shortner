@@ -5,6 +5,7 @@ type URLService struct {
 	COUNTER   int
 	LONGTOID  map[string]int
 	IDTOSMALL map[int]string
+	IDTOLONG  map[int]string
 }
 
 func (s *URLService) LongToShort(url string) (string, int, bool) {
@@ -19,9 +20,10 @@ func (s *URLService) LongToShort(url string) (string, int, bool) {
 
 		//if url does not exist convert id or counter
 		//of url to base62 encoded text
-		shorturl = s.base10ToBase62(s.COUNTER)
 		s.COUNTER++
+		shorturl = s.base10ToBase62(s.COUNTER)
 		s.LONGTOID[url] = s.COUNTER
+		s.IDTOLONG[s.COUNTER] = url
 		s.IDTOSMALL[s.COUNTER] = shorturl
 	}
 
@@ -35,7 +37,7 @@ func (s *URLService) ShortToLong(url string) string {
 	//encoded text as key
 	url = url[len("http://tiny.url/"):]
 	var n int = s.base62ToBase10(url)
-	return s.IDTOSMALL[n]
+	return s.IDTOLONG[n]
 }
 
 func (s *URLService) base62ToBase10(str string) int {

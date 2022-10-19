@@ -11,5 +11,5 @@ var RegisterBookStoreRoutes = func(router *mux.Router) {
 	router.HandleFunc("/records", controllers.CreateRecord).Methods("POST")
 	router.HandleFunc("/records/{id}", controllers.DeleteRecord).Methods("DELETE")
 	router.HandleFunc("/records", controllers.GetURLs)
-
+	router.HandleFunc("/records/short-to-long", controllers.GetShortURL)
 }

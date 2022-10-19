@@ -16,7 +16,8 @@ var s = shortner.URLService{
 	Elements:  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	COUNTER:   1000000000,
 	LONGTOID:  map[string]int{},
-	IDTOSMALL: map[int]string{}}
+	IDTOSMALL: map[int]string{},
+	IDTOLONG:  map[int]string{}}
 
 var URLRecords []URLRecord
 
@@ -112,6 +113,20 @@ func GetURLs(w http.ResponseWriter, r *http.Request) {
 
 	//Read records from file and return the response
 	getRecords := readfromFile()
-	fmt.Print(s, "\n\n")
 	json.NewEncoder(w).Encode(getRecords)
+}
+
+func GetShortURL(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	//Fetch short url from request body
+	urlname := &uri{}
+	utils.ParseBody(r, urlname)
+	url := (*urlname).Url
+
+	// Get long url corresponding to short url and return
+	// the response
+	res := s.ShortToLong(url)
+	resp := uri{res}
+	json.NewEncoder(w).Encode(resp)
 }
